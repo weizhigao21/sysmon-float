@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# 构建产物
+build/
+dist/
+*.spec.bak
+
+# 日志
+*.log
+
+# 调试残留
+.dbg/
+
+# 编辑器
+.vscode/
+.idea/
