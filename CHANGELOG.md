@@ -5,6 +5,19 @@
 格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，
 版本号遵循 [语义化版本](https://semver.org/lang/zh-CN/)。
 
+## [v1.0.3] - 2026-08-20
+
+### 新增
+
+- 网络迷你图支持**上下行双线显示**：下行绿线 + 上行红线
+- 双线**上下分区**：下行固定在上半区、上行固定在下半区，各自独立缩放，小波动也清晰可见
+- 迷你图 y 轴自适应缩放（`MiniChart` 新增 `set_series(series, split=True)` 接口）
+- 上行文字颜色改为红色（`COLORS.net_sent`，与上行线统一）
+
+### 变更
+
+- `COLORS.net_sent` 由 `#b8b8b8` 改为 `#ef5350`；删除冗余的 `net_sent_line` 配置
+
 ## [v1.0.2] - 2026-08-20
 
 ### 优化

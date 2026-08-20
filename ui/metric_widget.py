@@ -154,3 +154,7 @@ class MetricWidget(QWidget):
             self._detail_label.show()
         else:
             self._detail_label.hide()
+
+    def set_series(self, series: list[tuple[list[float], str]], split: bool = False) -> None:
+        """覆盖迷你图为多条数据线（split=True 时上下分区显示，如网络上行/下行）"""
+        self._chart.set_series(series, split=split)

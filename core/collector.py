@@ -36,8 +36,10 @@ class Collector(QObject):
             "CPU": deque(maxlen=CONFIG.CHART_HISTORY_SIZE),
             "内存": deque(maxlen=CONFIG.CHART_HISTORY_SIZE),
             "GPU": deque(maxlen=CONFIG.CHART_HISTORY_SIZE),
-            "网络": deque(maxlen=CONFIG.CHART_HISTORY_SIZE),
         }
+        # 网络上下行各自的历史（利用率 0~100，相对基准带宽），用于双线交叉图
+        self._net_recv_history: deque[float] = deque(maxlen=CONFIG.CHART_HISTORY_SIZE)
+        self._net_sent_history: deque[float] = deque(maxlen=CONFIG.CHART_HISTORY_SIZE)
 
     def start(self) -> None:
         """开始定时采集（应在所在线程中调用）"""
@@ -76,7 +78,15 @@ class Collector(QObject):
 
         self._history["CPU"].append(cpu_value)
         self._history["内存"].append(mem_details["percent"])
-        self._history["网络"].append(self._network.get_utilization())
+
+        # 网络：上下行各自利用率（相对基准带宽），供双线交叉图
+        net_reference = (CONFIG.NETWORK_REFERENCE_MBPS * 1_000_000) / 8
+        self._net_recv_history.append(
+            min(100.0, net_details["speed_recv_bps"] / net_reference * 100.0)
+        )
+        self._net_sent_history.append(
+            min(100.0, net_details["speed_sent_bps"] / net_reference * 100.0)
+        )
 
         # CPU 温度
         cpu_temp = self._cpu.get_temperature()
@@ -97,11 +107,14 @@ class Collector(QObject):
             },
         }
 
-        # 网络数据
+        # 网络数据（history 为上下行两条线）
         payload["网络"] = {
             "value": None,  # 网络没有百分比主值，使用 value_text 显示速度
             "details": net_details,
-            "history": list(self._history["网络"]),
+            "history": {
+                "recv": list(self._net_recv_history),
+                "sent": list(self._net_sent_history),
+            },
         }
 
         if gpu_details is not None:

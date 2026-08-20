@@ -264,9 +264,18 @@ class FloatWindow(QWidget):
             )
             self._network_widget.update_value(
                 value=None,
-                history=data["网络"]["history"],
+                history=[],
                 detail_text=None,
                 value_text=value_html,
+            )
+            # 迷你图上下分区：下行绿线在上半区、上行红线在下半区，各自独立缩放
+            net_history = data["网络"]["history"]
+            self._network_widget.set_series(
+                [
+                    (net_history.get("recv", []), CONFIG.COLORS["network"]),
+                    (net_history.get("sent", []), CONFIG.COLORS["net_sent"]),
+                ],
+                split=True,
             )
 
     # ---------- 鼠标拖拽 ----------

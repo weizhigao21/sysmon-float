@@ -48,7 +48,7 @@ class AppConfig:
         "memory": "#ba68c8",
         "gpu": "#ffb74d",
         "network": "#81c784",
-        "net_sent": "#b8b8b8",      # 网络上行（比 text_secondary 亮，深色背景下清晰可辨）
+        "net_sent": "#ef5350",       # 网络上行（红色，文字与迷你图线统一）
         "warning": "#ffca28",
         "critical": "#ef5350",
     }
