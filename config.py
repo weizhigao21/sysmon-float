@@ -35,6 +35,7 @@ class AppConfig:
     FONT_SIZE_VALUE: int = 18      # 百分比数值
     FONT_SIZE_NAME: int = 12       # 指标名称
     FONT_SIZE_DETAIL: int = 11     # 辅助信息
+    FONT_SIZE_NET_SENT: int = 14   # 网络上行字号（与下行主值 18px 差距适中）
 
     # 配色方案（深色科技风）
     COLORS = {
@@ -47,6 +48,7 @@ class AppConfig:
         "memory": "#ba68c8",
         "gpu": "#ffb74d",
         "network": "#81c784",
+        "net_sent": "#b8b8b8",      # 网络上行（比 text_secondary 亮，深色背景下清晰可辨）
         "warning": "#ffca28",
         "critical": "#ef5350",
     }

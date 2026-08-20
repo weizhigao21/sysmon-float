@@ -253,12 +253,20 @@ class FloatWindow(QWidget):
             net_details = data["网络"]["details"]
             speed_recv = net_details.get("speed_recv", "--")
             speed_sent = net_details.get("speed_sent", "--")
+            # 上下行并排显示：下行大字号亮色（主值）、上行略小亮灰（辅助），
+            # 富文本单行布局固定不跳动，充分利用卡片横向空间
+            value_html = (
+                f"<span style='color:{CONFIG.COLORS['network']};"
+                f"font-size:{CONFIG.FONT_SIZE_VALUE}px;'>↓ {speed_recv}</span>"
+                f"&nbsp;&nbsp;&nbsp;"
+                f"<span style='color:{CONFIG.COLORS['net_sent']};"
+                f"font-size:{CONFIG.FONT_SIZE_NET_SENT}px;'>↑ {speed_sent}</span>"
+            )
             self._network_widget.update_value(
                 value=None,
                 history=data["网络"]["history"],
-                # 上行单独放在辅助行，下行是主值（value_text），两者分开显示
-                detail_text=f"↑ {speed_sent}",
-                value_text=f"↓ {speed_recv}",
+                detail_text=None,
+                value_text=value_html,
             )
 
     # ---------- 鼠标拖拽 ----------

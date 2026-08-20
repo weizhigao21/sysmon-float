@@ -38,9 +38,9 @@ class MetricWidget(QWidget):
 
         # 第一行：名称 + 数值（自动换行切换）
         self._top_widget = QWidget()
-        # auto_layout=False 时固定垂直布局（名称在上、数值在下），
-        # 防止数值长度波动导致布局反复切换
-        self._use_horizontal_top = self._auto_layout
+        # auto_layout=False 时固定初始布局（水平：名称左、数值右），
+        # 防止数值长度波动导致布局反复切换；数值内可自行使用富文本并排多段
+        self._use_horizontal_top = True
 
         self._name_label = QLabel(self._name)
         self._name_label.setStyleSheet(
