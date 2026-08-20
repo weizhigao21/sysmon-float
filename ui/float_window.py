@@ -152,7 +152,8 @@ class FloatWindow(QWidget):
         self._cpu_widget = MetricWidget("CPU", "cpu")
         self._memory_widget = MetricWidget("内存", "memory")
         self._gpu_widget = MetricWidget("GPU", "gpu")
-        self._network_widget = MetricWidget("网络", "network")
+        # 网络速度文本长度波动大，固定垂直布局 + 上下行分行显示，避免布局跳动
+        self._network_widget = MetricWidget("网络", "network", auto_layout=False)
 
         self._apply_layout(self._settings.get("layout", "grid"))
 
@@ -255,7 +256,8 @@ class FloatWindow(QWidget):
             self._network_widget.update_value(
                 value=None,
                 history=data["网络"]["history"],
-                detail_text=f"↑ {speed_sent}  ↓ {speed_recv}",
+                # 上行单独放在辅助行，下行是主值（value_text），两者分开显示
+                detail_text=f"↑ {speed_sent}",
                 value_text=f"↓ {speed_recv}",
             )
 

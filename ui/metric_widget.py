@@ -14,12 +14,20 @@ from ui.mini_chart import MiniChart
 class MetricWidget(QWidget):
     """展示单个指标的名称、数值和迷你图"""
 
-    def __init__(self, name: str, color_key: str, parent: Optional[QWidget] = None) -> None:
+    def __init__(
+        self,
+        name: str,
+        color_key: str,
+        parent: Optional[QWidget] = None,
+        auto_layout: bool = True,
+    ) -> None:
         super().__init__(parent)
         self._name = name
         self._color = CONFIG.COLORS[color_key]
         self._warning = CONFIG.THRESHOLDS["warning"]
         self._critical = CONFIG.THRESHOLDS["critical"]
+        # 自动横/竖切换：数值文本长度波动大（如网络速度）时固定布局，避免跳动
+        self._auto_layout = auto_layout
 
         self._setup_ui()
 
@@ -30,7 +38,9 @@ class MetricWidget(QWidget):
 
         # 第一行：名称 + 数值（自动换行切换）
         self._top_widget = QWidget()
-        self._use_horizontal_top = True
+        # auto_layout=False 时固定垂直布局（名称在上、数值在下），
+        # 防止数值长度波动导致布局反复切换
+        self._use_horizontal_top = self._auto_layout
 
         self._name_label = QLabel(self._name)
         self._name_label.setStyleSheet(
@@ -125,16 +135,17 @@ class MetricWidget(QWidget):
 
         # 自动换行：数值文本较长（>10字符）时切换为垂直布局，短于 6 字符恢复水平
         # 中间区间保持当前状态（滞回），避免速度文本在边界抖动时反复重建布局
-        current_text = self._value_label.text()
-        length = len(current_text)
-        if length > 10:
-            needs_vertical = True
-        elif length < 6:
-            needs_vertical = False
-        else:
-            needs_vertical = self._use_horizontal_top
-        if needs_vertical == self._use_horizontal_top:
-            self._build_top_layout(horizontal=not needs_vertical)
+        if self._auto_layout:
+            current_text = self._value_label.text()
+            length = len(current_text)
+            if length > 10:
+                needs_vertical = True
+            elif length < 6:
+                needs_vertical = False
+            else:
+                needs_vertical = self._use_horizontal_top
+            if needs_vertical == self._use_horizontal_top:
+                self._build_top_layout(horizontal=not needs_vertical)
 
         self._chart.set_data(history)
 

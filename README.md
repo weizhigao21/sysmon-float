@@ -1,5 +1,7 @@
 # 系统性能监控悬浮窗
 
+> 版本 **v1.0.1** · [更新日志](CHANGELOG.md)
+
 一个 Windows 桌面悬浮窗程序，实时显示 CPU、内存、GPU 和网络的使用情况。
 
 ## 功能
@@ -7,7 +9,7 @@
 - **CPU** — 总体利用率 + 核心数 + 温度 + 迷你折线图
 - **内存** — 利用率 + 总量/已用（如 `32G / 8.3G`）+ 迷你折线图
 - **GPU** — 利用率 + 显存总量/已用（如 `显存 11G / 3.1G`）+ 温度 + 迷你折线图（NVIDIA）
-- **网络** — 实时上传/下载速度 + 迷你折线图（如 `↓ 3.5 MB/s` `↑ 1.2 MB/s`）
+- **网络** — 下行速度主显示 + 上行速度分行显示 + 迷你折线图（如 `↓ 3.5 MB/s`，辅助行 `↑ 1.2 MB/s`），布局固定不跳动
 - **深色科技风 UI**，半透明背景
 - **窗口置顶**、无边框、可拖拽
 - **窗口位置自动记忆**，重启恢复
@@ -26,6 +28,7 @@
 ├── config.py            # 全局配置（配色、字体大小、刷新间隔、网络基准带宽等）
 ├── requirements.txt     # Python 依赖
 ├── 3.ico                # 应用图标（exe + 窗口）
+├── 打包.bat             # 一键打包脚本（PyInstaller 单文件，含依赖检查）
 ├── core/
 │   ├── collector.py     # 数据采集调度器（独立线程）
 │   ├── cpu_monitor.py   # CPU 监控（psutil + LibreHardwareMonitor 温度）
@@ -33,6 +36,7 @@
 │   ├── gpu_monitor.py   # GPU 监控（nvidia-ml-py + WMI 回退）
 │   └── network_monitor.py# 网络监控（psutil）
 └── ui/
+    ├── version.py       # 应用版本号（与 README / CHANGELOG 同步）
     ├── float_window.py  # 悬浮窗主窗口
     ├── metric_widget.py # 单指标卡片组件
     └── mini_chart.py    # 迷你折线图组件
@@ -51,6 +55,12 @@ python main.py
 
 ```bash
 cd g:\code\系统性能监控-win-悬浮窗
+打包.bat                # 推荐：自动检查依赖并打包为单文件 exe
+```
+
+或直接使用 PyInstaller：
+
+```bash
 pyinstaller 系统性能监控.spec --noconfirm --clean
 ```
 
@@ -91,8 +101,8 @@ pyinstaller 系统性能监控.spec --noconfirm --clean
 - **CPU 温度需要以管理员身份运行**，否则 LibreHardwareMonitor 可能读取不到温度传感器
 - GPU 利用率需要 NVIDIA 显卡并安装 `nvidia-ml-py`
 - 非 NVIDIA 显卡可通过 WMI 显示 GPU 名称，但无法获取利用率
-- 打包时需将 `LibreHardwareMonitor` 目录一并包含，否则 CPU 温度功能失效
-- 打包后约 **36MB**（主要为 Qt6 DLL），含 LibreHardwareMonitor 后略增
+- 打包时需将 `LibreHardwareMonitor` 目录一并包含，否则 CPU 温度功能失效（`打包.bat` 已处理）
+- 打包后约 **46MB**（单文件，主要为 Qt6 DLL）
 
 ## 许可证
 
