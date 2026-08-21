@@ -1,6 +1,6 @@
 """全局配置"""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 
 
@@ -20,6 +20,17 @@ class AppConfig:
 
     # 网络利用率参考基准带宽（Mbps），达到该带宽视为 100% 利用率
     NETWORK_REFERENCE_MBPS: int = 400
+
+    # 网络速度统计口径：
+    # True（默认）：只统计物理网卡（以太网/WiFi），排除 TUN/VPN/虚拟机/回环等虚拟网卡。
+    #   Clash/V2Ray 开 TUN 模式时，同一份流量会被物理网卡与虚拟隧道网卡
+    #   （如 "Meta Tunnel"）重复计数，聚合值约为实际值的 2 倍，需过滤。
+    # False：统计全部网卡（旧行为）。
+    NETWORK_PHYSICAL_ONLY: bool = True
+
+    # 手动指定要统计的网卡名白名单（对应 psutil 的接口名，如 ["以太网"]）。
+    # 非空时优先于此白名单，自动物理网卡检测不再生效；留空则按上述口径自动判定。
+    NETWORK_INCLUDE_ONLY: list = field(default_factory=list)
 
     # 透明度 0.0 ~ 1.0
     WINDOW_OPACITY: float = 0.88
