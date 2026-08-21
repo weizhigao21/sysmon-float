@@ -5,6 +5,18 @@
 格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，
 版本号遵循 [语义化版本](https://semver.org/lang/zh-CN/)。
 
+## [v1.0.4] - 2026-08-21
+
+### 修复
+
+- 修复网络下载/上传速度显示约为实际 **2 倍**的问题：Clash/V2Ray 等代理开启 TUN 模式时，同一份流量会被物理网卡与虚拟隧道网卡（如 `Meta Tunnel`）各计数一次，`psutil.net_io_counters()` 聚合值虚高
+- 网络速度统计改为**只统计物理网卡**（以太网/WiFi）：通过 `GetAdaptersAddresses` 识别接口类型（IfType 6/71）并排除 TUN/VMware/蓝牙/回环等虚拟网卡，识别结果缓存 120s；识别失败自动回退为全部网卡聚合
+
+### 新增
+
+- 配置项 `NETWORK_PHYSICAL_ONLY`（默认 `True`，只统计物理网卡；`False` 恢复旧行为统计全部网卡）
+- 配置项 `NETWORK_INCLUDE_ONLY`（网卡名白名单，非空时优先于自动检测，如 `["以太网"]`）
+
 ## [v1.0.3] - 2026-08-20
 
 ### 新增
